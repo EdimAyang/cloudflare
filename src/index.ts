@@ -1,6 +1,6 @@
-import { zfd } from "zod-form-data";
-import { z } from "zod";
 import { Resend } from "resend";
+import { z } from "zod";
+import { zfd } from "zod-form-data";
 
 const formSchema = zfd.formData({
 	role: zfd.text(z.string().min(1, "Role is required")),
@@ -59,39 +59,24 @@ const createEmailTemplate = (data: EmailData) => `
 </html>
 `;
 
-const corsHeaders = {
-	'Access-Control-Allow-Origin': '*',
-	'Access-Control-Allow-Methods': 'GET,POST,PUT, DELETE,OPTIONS',
-	'Access-Control-Allow-Headers':'Content-Type, Authorization',
-	'Access-Control-Max-Age':'86400'
-}
 export default {
 	async fetch(request, env) {
-		if(request.method === 'OPTIONS'){
-		return new Response(null, {
-		status:204,
-		headers:corsHeaders
-	})
-}
 		if (request.method !== "POST") {
 			return new Response(JSON.stringify({ error: "Method not allowed" }), {
 				status: 405,
-				headers: { "Content-Type": "application/json" , ...corsHeaders },
+				headers: { "Content-Type": "application/json" },
 			});
 		}
 
-
 		try {
 			const formData = await request.formData();
-
 			const result = formSchema.safeParse(formData);
 
 			if (!result.success) {
 				const errors = result.error.flatten();
 				return new Response(JSON.stringify({ success: false, errors }), {
 					status: 400,
-					headers: { "Content-Type": "application/json", ...corsHeaders},
-					
+					headers: { "Content-Type": "application/json" },
 				});
 			}
 
@@ -100,15 +85,12 @@ export default {
 			const resend = new Resend(env.RESEND_API_KEY);
 
 			const fileBuffer = await cv.arrayBuffer();
-			const fileBase64 = btoa(
-				String.fromCharCode(...new Uint8Array(fileBuffer)),
-			);
-
+			const fileBase64 = Buffer.from(fileBuffer).toString("base64");
 			const { error } = await resend.emails.send({
 				from: `Virgas Hiring ${env.RESEND_EMAIL}`,
 				to: env.VIRGAS_EMAIL,
 				subject: `New Virgas Job Application`,
-				html: createEmailTemplate({ role, projects, motivation, message, }),
+				html: createEmailTemplate({ role, projects, motivation, message }),
 				attachments: [
 					{
 						filename: cv.name,
@@ -126,7 +108,7 @@ export default {
 					}),
 					{
 						status: 500,
-						headers: { "Content-Type": "application/json" , ...corsHeaders},
+						headers: { "Content-Type": "application/json" },
 					},
 				);
 			}
@@ -135,7 +117,7 @@ export default {
 				JSON.stringify({ success: true, message: "Email sent successfully." }),
 				{
 					status: 200,
-					headers: { "Content-Type": "application/json", ...corsHeaders },
+					headers: { "Content-Type": "application/json" },
 				},
 			);
 		} catch (err) {
@@ -147,7 +129,7 @@ export default {
 				}),
 				{
 					status: 500,
-					headers: { "Content-Type": "application/json" , ...corsHeaders},
+					headers: { "Content-Type": "application/json" },
 				},
 			);
 		}
