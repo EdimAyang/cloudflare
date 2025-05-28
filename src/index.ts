@@ -59,8 +59,22 @@ const createEmailTemplate = (data: EmailData) => `
 </html>
 `;
 
+const corsHeaders = {
+	"Access-Control-Allow-Origin": "*",
+	"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+	"Access-Control-Allow-Headers": "Content-Type, Authorization",
+	"Access-Control-Max-Age": "86400",
+};
+
 export default {
 	async fetch(request, env) {
+		if (request.method === "OPTIONS") {
+			return new Response(null, {
+				status: 204,
+				headers: corsHeaders,
+			});
+		}
+
 		if (request.method !== "POST") {
 			return new Response(JSON.stringify({ error: "Method not allowed" }), {
 				status: 405,
@@ -76,7 +90,7 @@ export default {
 				const errors = result.error.flatten();
 				return new Response(JSON.stringify({ success: false, errors }), {
 					status: 400,
-					headers: { "Content-Type": "application/json" },
+					headers: { "Content-Type": "application/json", ...corsHeaders },
 				});
 			}
 
@@ -108,7 +122,7 @@ export default {
 					}),
 					{
 						status: 500,
-						headers: { "Content-Type": "application/json" },
+						headers: { "Content-Type": "application/json", ...corsHeaders },
 					},
 				);
 			}
@@ -117,7 +131,7 @@ export default {
 				JSON.stringify({ success: true, message: "Email sent successfully." }),
 				{
 					status: 200,
-					headers: { "Content-Type": "application/json" },
+					headers: { "Content-Type": "application/json", ...corsHeaders },
 				},
 			);
 		} catch (err) {
@@ -129,7 +143,7 @@ export default {
 				}),
 				{
 					status: 500,
-					headers: { "Content-Type": "application/json" },
+					headers: { "Content-Type": "application/json", ...corsHeaders },
 				},
 			);
 		}
