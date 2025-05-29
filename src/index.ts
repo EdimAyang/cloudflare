@@ -118,7 +118,8 @@ export default {
 				return new Response(
 					JSON.stringify({
 						success: false,
-						error: "Failed to send email, please try again later.",
+						message: "Failed to send email, please try again later.",
+						error: JSON.stringify(error),
 					}),
 					{
 						status: 500,
@@ -139,7 +140,8 @@ export default {
 			return new Response(
 				JSON.stringify({
 					success: false,
-					error: "Failed to send email, please try again later.",
+					message: "Failed to send email, please try again later.",
+					error: JSON.stringify(err),
 				}),
 				{
 					status: 500,
