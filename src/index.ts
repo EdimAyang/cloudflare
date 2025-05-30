@@ -32,12 +32,10 @@ export const RiderFormSchema = z.object({
   email: z.string().trim().optional(),
   phone: z.string().trim(),
   gender: z.string().trim().min(2, 'Please enter your gender'),
-  NOK: z.string().trim().min(2, 'please Next of Kin name'),
-  NOKnumber: z.string().trim(),
   DOB: z.string().min(2, 'Please enter your Date of birth') ,
   fname: z.string().trim().min(2, 'Please enter first name'),
   lname: z.string().trim().min(2, 'Please enter Last name'),
-  // user_type: z.enum(['individual', 'business']),
+  
 });
 
 export type RiderFormValues = z.infer<typeof RiderFormSchema>;
@@ -90,17 +88,15 @@ const createRiderTemplate = (riderData: RiderFormValues) => `
 <body>
     <div class="container">
         <div class="header">
-            <h1>New Application Received</h1>
+            <h1>New Rider Application Received</h1>
         </div>
         <div class="content">
             <p><strong>First Name:</strong> ${riderData.fname}</p>
             <p><strong>Last name:</strong> ${riderData.lname}</p>
             <p><strong>Phone number:</strong> ${riderData.phone}</p>
-			<p><strong>Next of kin:</strong> ${riderData.NOK}</p>
-			<p><strong>Next of kin number:</strong> ${riderData.NOKnumber}</p>
 			<p><strong>Email:</strong> ${riderData.email}</p>
-			 <p><strong>Phone number:</strong> ${riderData.gender}</p>
-			<p><strong>Phone number:</strong> ${riderData.DOB}</p>
+			 <p><strong>Gender:</strong> ${riderData.gender}</p>
+			<p><strong>Date of birth:</strong> ${riderData.DOB}</p>
         </div>
         <div class="footer">
             <p>This email was sent from your virgasapp riders form.</p>
