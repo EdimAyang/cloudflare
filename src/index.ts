@@ -28,18 +28,19 @@ const formSchema = zfd.formData({
 
 type EmailData = Omit<z.infer<typeof formSchema>, "cv">;
 
-// export const RiderFormSchema = z.object({
-//   email: z.string().trim().optional(),
-//   phone: z.string().trim(),
-//   gender: z.string().trim().min(2, 'Please enter your gender'),
-//   NOK: z.string().trim().min(2, 'please Next of Kin name'),
-//   NOKnumber: z.string().trim(),
-//   DOB: z.string().min(2, 'Please enter your Date of birth') ,
-//   fname: z.string().trim().min(2, 'Please enter first name'),
-//   lname: z.string().trim().min(2, 'Please enter Last name'),
-// });
-// 
-// export type RiderFormValues = z.infer<typeof RiderFormSchema>;
+export const RiderFormSchema = z.object({
+  email: z.string().trim().optional(),
+  phone: z.string().trim(),
+  gender: z.string().trim().min(2, 'Please enter your gender'),
+  NOK: z.string().trim().min(2, 'please Next of Kin name'),
+  NOKnumber: z.string().trim(),
+  DOB: z.string().min(2, 'Please enter your Date of birth') ,
+  fname: z.string().trim().min(2, 'Please enter first name'),
+  lname: z.string().trim().min(2, 'Please enter Last name'),
+  // user_type: z.enum(['individual', 'business']),
+});
+
+export type RiderFormValues = z.infer<typeof RiderFormSchema>;
 
 
 const createEmailTemplate = (data: EmailData) => `
@@ -74,40 +75,40 @@ const createEmailTemplate = (data: EmailData) => `
 </html>
 `;
 
-// const createRiderTemplate = (riderData: RiderFormValues) => `
-// <!DOCTYPE html>
-// <html>
-// <head>
-    // <style>
-        // body { font-family: Arial, sans-serif; line-height: 1.6; }
-        // .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        // .header { background-color: #f4f4f4; padding: 10px; text-align: center; }
-        // .content { margin: 20px 0; }
-        // .footer { margin-top: 20px; font-size: 0.8em; color: #666; }
-    // </style>
-// </head>
-// <body>
-    // <div class="container">
-        // <div class="header">
-            // <h1>New Application Received</h1>
-        // </div>
-        // <div class="content">
-            // <p><strong>First Name:</strong> ${riderData.fname}</p>
-            // <p><strong>Last name:</strong> ${riderData.lname}</p>
-            // <p><strong>Phone number:</strong> ${riderData.phone}</p>
-			// <p><strong>Next of kin:</strong> ${riderData.NOK}</p>
-			// <p><strong>Next of kin number:</strong> ${riderData.NOKnumber}</p>
-			// <p><strong>Email:</strong> ${riderData.email}</p>
-			//  <p><strong>Phone number:</strong> ${riderData.gender}</p>
-			// <p><strong>Phone number:</strong> ${riderData.DOB}</p>
-        // </div>
-        // <div class="footer">
-            // <p>This email was sent from your virgasapp riders form.</p>
-        // </div>
-    // </div>
-// </body>
-// </html>
-// `;
+const createRiderTemplate = (riderData: RiderFormValues) => `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #f4f4f4; padding: 10px; text-align: center; }
+        .content { margin: 20px 0; }
+        .footer { margin-top: 20px; font-size: 0.8em; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>New Application Received</h1>
+        </div>
+        <div class="content">
+            <p><strong>First Name:</strong> ${riderData.fname}</p>
+            <p><strong>Last name:</strong> ${riderData.lname}</p>
+            <p><strong>Phone number:</strong> ${riderData.phone}</p>
+			<p><strong>Next of kin:</strong> ${riderData.NOK}</p>
+			<p><strong>Next of kin number:</strong> ${riderData.NOKnumber}</p>
+			<p><strong>Email:</strong> ${riderData.email}</p>
+			 <p><strong>Phone number:</strong> ${riderData.gender}</p>
+			<p><strong>Phone number:</strong> ${riderData.DOB}</p>
+        </div>
+        <div class="footer">
+            <p>This email was sent from your virgasapp riders form.</p>
+        </div>
+    </div>
+</body>
+</html>
+`;
 
 
 const corsHeaders = {
@@ -135,61 +136,61 @@ export default {
 
 		const resend = new Resend(env.RESEND_API_KEY);
 
-		// const url = new URL(request.url)
+		const url = new URL(request.url)
 
-		// if(url.pathname === '/riders'){
-		// 	try {
-		// 	const Data = await request.json();
-		// 	const result = RiderFormSchema.parse(Data);
-		// 	if (!result) {
-		// 		return new Response(JSON.stringify({ success: false }), {
-		// 			status: 400,
-		// 			headers: { "Content-Type": "application/json", ...corsHeaders },
-		// 		});
-		// 	}
-		// 	const { fname, lname, NOK, NOKnumber, phone, DOB, gender, email } = result;
-		// 	const { error } = await resend.emails.send({
-		// 		from: `Virgas Hiring ${env.RESEND_EMAIL}`,
-		// 		to: env.VIRGAS_EMAIL,
-		// 		subject: `New Virgas Job Application`,
-		// 		html: createRiderTemplate({ fname, lname, NOK,  NOKnumber, phone, DOB, gender, email}),
-		// 	});
-		// 		if (error) {
-		// 			console.error("Error sending email:", error);
-		// 			return new Response(
-		// 				JSON.stringify({
-		// 					success: false,
-		// 					message: "Failed to send email, please try again later.",
-		// 					error: JSON.stringify(error),
-		// 				}),
-		// 				{
-		// 					status: 500,
-		// 					headers: { "Content-Type": "application/json", ...corsHeaders },
-		// 				},
-		// 			);
-		// 		}
-		// 		return new Response(
-		// 			JSON.stringify({ success: true, message: "Email sent successfully." }),
-		// 			{
-		// 				status: 200,
-		// 				headers: { "Content-Type": "application/json", ...corsHeaders },
-		// 			},
-		// 		);
-		// 		} catch (err) {
-		// 			console.error("Error processing request:", err);
-		// 			return new Response(
-		// 				JSON.stringify({
-		// 					success: false,
-		// 					message: "Failed to send email, please try again later.",
-		// 					error: JSON.stringify(err),
-		// 				}),
-		// 				{
-		// 					status: 500,
-		// 					headers: { "Content-Type": "application/json", ...corsHeaders },
-		// 				},
-		// 			);
-		// 		}
-		// }
+		if(url.pathname === '/riders'){
+			try {
+			const Data = await request.json();
+			const result = RiderFormSchema.parse(Data);
+			if (!result) {
+				return new Response(JSON.stringify({ success: false }), {
+					status: 400,
+					headers: { "Content-Type": "application/json", ...corsHeaders },
+				});
+			}
+			const { fname, lname, NOK, NOKnumber, phone, DOB, gender, email } = result;
+			const { error } = await resend.emails.send({
+				from: `Virgas Hiring ${env.RESEND_EMAIL}`,
+				to: env.VIRGAS_EMAIL,
+				subject: `New Virgas Job Application`,
+				html: createRiderTemplate({ fname, lname, NOK,  NOKnumber, phone, DOB, gender, email}),
+			});
+				if (error) {
+					console.error("Error sending email:", error);
+					return new Response(
+						JSON.stringify({
+							success: false,
+							message: "Failed to send email, please try again later.",
+							error: JSON.stringify(error),
+						}),
+						{
+							status: 500,
+							headers: { "Content-Type": "application/json", ...corsHeaders },
+						},
+					);
+				}
+				return new Response(
+					JSON.stringify({ success: true, message: "Email sent successfully." }),
+					{
+						status: 200,
+						headers: { "Content-Type": "application/json", ...corsHeaders },
+					},
+				);
+				} catch (err) {
+					console.error("Error processing request:", err);
+					return new Response(
+						JSON.stringify({
+							success: false,
+							message: "Failed to send email, please try again later.",
+							error: JSON.stringify(err),
+						}),
+						{
+							status: 500,
+							headers: { "Content-Type": "application/json", ...corsHeaders },
+						},
+					);
+				}
+		}
 
 
 
