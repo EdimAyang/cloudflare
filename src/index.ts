@@ -148,7 +148,7 @@ export default {
 			const { error } = await resend.emails.send({
 				from: `Virgas Hiring ${env.RESEND_EMAIL}`,
 				to: env.VIRGAS_EMAIL,
-				subject: `New Virgas Job Application`,
+				subject: `New Virgas Rider Job Application`,
 				html: createRiderTemplate({ fname, lname,  phone, DOB, gender, email}),
 			});
 				if (error) {
@@ -209,7 +209,7 @@ export default {
 			const { error } = await resend.emails.send({
 				from: `Virgas Hiring ${env.RESEND_EMAIL}`,
 				to: env.VIRGAS_EMAIL,
-				subject: `New Virgas Job Application`,
+				subject: `New Virgas Recruit Job Application`,
 				html: createEmailTemplate({ role, projects, motivation, message }),
 				attachments: [
 					{
