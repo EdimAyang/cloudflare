@@ -144,12 +144,12 @@ export default {
 					headers: { "Content-Type": "application/json", ...corsHeaders },
 				});
 			}
-			const { fname, lname, NOK, NOKnumber, phone, DOB, gender, email } = result;
+			const { fname, lname,  phone, DOB, gender, email } = result;
 			const { error } = await resend.emails.send({
 				from: `Virgas Hiring ${env.RESEND_EMAIL}`,
 				to: env.VIRGAS_EMAIL,
 				subject: `New Virgas Job Application`,
-				html: createRiderTemplate({ fname, lname, NOK,  NOKnumber, phone, DOB, gender, email}),
+				html: createRiderTemplate({ fname, lname,  phone, DOB, gender, email}),
 			});
 				if (error) {
 					console.error("Error sending email:", error);
